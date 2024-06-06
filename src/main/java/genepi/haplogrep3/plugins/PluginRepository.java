@@ -22,13 +22,13 @@ public class PluginRepository {
 
 	public static String LATEST_VERSION = null;
 
-	public static final File PLUGINS_LOCATION = new File("trees");
+	public File pluginsLocation = new File("trees");
 
 	private List<List<Plugin>> repositories = new Vector<List<Plugin>>();
 
-	public PluginRepository(List<String> urls, boolean forceUpdate) throws IOException {
-
-		PLUGINS_LOCATION.mkdirs();
+	public PluginRepository(List<String> urls, boolean forceUpdate, File pluginsLocation) throws IOException {
+		this.pluginsLocation = pluginsLocation;
+		pluginsLocation.mkdirs();
 
 		for (String url : urls) {
 			repositories.add(loadFromUrl(url, forceUpdate));
@@ -86,7 +86,7 @@ public class PluginRepository {
 
 		String filename = "tree.yaml";
 
-		File pluginPath = new File(PLUGINS_LOCATION, FileUtil.path(id, release.getVersion()));
+		File pluginPath = new File(pluginsLocation, FileUtil.path(id, release.getVersion()));
 		InstalledPlugin plugin = new InstalledPlugin();
 		plugin.setRelease(release);
 		plugin.setPath(new File(pluginPath.getAbsolutePath(), filename));
@@ -113,7 +113,7 @@ public class PluginRepository {
 		Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 	}
-	
+
 	protected void extract(File archive, File target) throws IOException {
 		new ZipFile(archive).extractAll(target.getAbsolutePath());
 
@@ -128,7 +128,7 @@ public class PluginRepository {
 		File indexFile = null;
 
 		if (isHttpProtocol(url)) {
-			indexFile = new File(PLUGINS_LOCATION, getNameForUrl(url) + ".yaml");
+			indexFile = new File(pluginsLocation, getNameForUrl(url) + ".yaml");
 			if (!indexFile.exists() || forceUpdate) {
 				download(url, indexFile);
 			}

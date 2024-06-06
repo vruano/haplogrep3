@@ -18,7 +18,7 @@ public class PhylotreeRepository {
 	private List<Phylotree> trees;
 
 	private List<String> categories = new Vector<String>();
-	
+
 	private boolean forceUpdate;
 
 	public static boolean FORCE_UPDATE = false;
@@ -32,7 +32,7 @@ public class PhylotreeRepository {
 
 		trees = new Vector<Phylotree>();
 
-		PluginRepository repository = new PluginRepository(configuration.getRepositories(), forceUpdate);
+		PluginRepository repository = new PluginRepository(configuration.getRepositories(), forceUpdate, configuration.getPluginsLocation());
 
 		for (String id : configuration.getPhylotrees()) {
 
@@ -61,7 +61,7 @@ public class PhylotreeRepository {
 
 	public void install(String id, Configuration configuration) throws IOException {
 
-		PluginRepository repository = new PluginRepository(configuration.getRepositories(), forceUpdate);
+		PluginRepository repository = new PluginRepository(configuration.getRepositories(), forceUpdate, configuration.getPluginsLocation());
 
 		Phylotree phylotree = null;
 
@@ -79,7 +79,7 @@ public class PhylotreeRepository {
 
 		if (phylotree != null) {
 			configuration.getPhylotrees().add(id);
-			configuration.save(new File(App.CONFIG_FILENAME));
+			configuration.save();
 		}
 	}
 
@@ -105,11 +105,11 @@ public class PhylotreeRepository {
 	public List<String> getCategories() {
 		return categories;
 	}
-	
-	public List<Phylotree> getByCategory(String category){
-		
+
+	public List<Phylotree> getByCategory(String category) {
+
 		// TODO: use data-structure with O(1), hashmap or so.
-		
+
 		List<Phylotree> result = new Vector<Phylotree>();
 		for (Phylotree tree : trees) {
 			if (tree.getCategory().equals(category)) {
